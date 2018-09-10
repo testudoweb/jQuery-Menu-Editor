@@ -765,7 +765,7 @@ function MenuEditor(idSelector, options) {
         labelEdit: '<i class="glyphicon glyphicon-edit clickable"></i>',
         labelRemove: '<i class="glyphicon glyphicon-remove clickable"></i>',
         textConfirmDelete: 'This item will be deleted. Are you sure?',
-        iconPicker: { cols: 5, footer: false },
+        iconPicker: { enable: true, cols: 5, footer: false },
         listOptions: { hintCss: {border: '1px dashed #13981D'}, opener: {
                         as: 'html',
                         close: '<i class="fa fa-minus"></i>',
@@ -782,14 +782,17 @@ function MenuEditor(idSelector, options) {
     var iconPickerOpt = settings.iconPicker;
     var options = settings.listOptions;
     //iconpicker plugin
-    var iconPicker = $('#'+idSelector+'_icon').iconpicker(iconPickerOpt);
+    var iconPicker = !iconPickerOpt.enable || $('#'+idSelector+'_icon').iconpicker(iconPickerOpt);
     //sortable list plugin
     $main.sortableLists(settings.listOptions);
     /* EVENTS */
-    iconPicker.on('change', function (e) {
-        var iconClass = (e.iconClass !== '') ? e.iconClass + ' ' : '';
-        $form.find("[name=icon]").val(iconClass + e.icon);
-    });
+    if(iconPicker){
+        iconPicker.on('change', function (e) {
+            var iconClass = (e.iconClass !== '') ? e.iconClass + ' ' : '';
+            $form.find("[name=icon]").val(iconClass + e.icon);
+        });
+    }
+    
     $(document).on('click', '.btnRemove', function (e) {
         e.preventDefault();
         if (confirm(settings.textConfirmDelete)){
@@ -863,7 +866,7 @@ function MenuEditor(idSelector, options) {
             $form.find("[name=" + p + "]").val(v);
         });
         $form.find(".item-menu").first().focus();
-        if (data.hasOwnProperty('icon')) {
+        if (data.hasOwnProperty('icon') && iconPicker) {
             iconPicker.iconpicker('setIcon', extractIcon(data.icon));
         }
         $updateButton.removeAttr('disabled');
@@ -879,8 +882,10 @@ function MenuEditor(idSelector, options) {
 
     function resetForm() {
         $form[0].reset();
-        iconPicker = iconPicker.iconpicker(iconPickerOpt);
-        iconPicker.iconpicker('setIcon', 'empty');
+        if(iconPicker){
+            iconPicker = iconPicker.iconpicker(iconPickerOpt);
+            iconPicker.iconpicker('setIcon', 'empty');
+        }
         $updateButton.attr('disabled', true);
         itemEditing = null;
     }
