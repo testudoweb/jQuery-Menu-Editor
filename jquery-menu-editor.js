@@ -782,7 +782,7 @@ function MenuEditor(idSelector, options) {
     var iconPickerOpt = settings.iconPicker;
     var options = settings.listOptions;
     //iconpicker plugin
-    var iconPicker = !iconPickerOpt.enable || $('#'+idSelector+'_icon').iconpicker(iconPickerOpt);
+    var iconPicker = iconPickerOpt.enable ? $('#'+idSelector+'_icon').iconpicker(iconPickerOpt) : false;
     //sortable list plugin
     $main.sortableLists(settings.listOptions);
     /* EVENTS */
